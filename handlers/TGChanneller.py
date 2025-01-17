@@ -13,6 +13,8 @@ async def Channelling(PHOTO_URLS: list, caption: str = None):
     CHANNEL_ID = config.CHANNEL_ID.get_secret_value()
     MSG_THREAD = config.MSG_THREAD.get_secret_value()
 
+    caption = f'Заказать 👉 t.me/yulia_mybestsale \n {caption}'
+
     print(PHOTO_URLS)
     if PHOTO_URLS:
         print(1)

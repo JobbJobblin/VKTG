@@ -1,10 +1,19 @@
 import vk_api
 import asyncio
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+import logging
+from memory_profiler import profile
+import psutil
 
 from handlers.TGChanneller import Channelling
 
-def VkPars():
+def memory_usage():
+    process = psutil.Process()
+    mem_info = process.memory_info()
+    return mem_info.rss / 1024 ** 2  # in MB
+
+
+def VkPars(stop_event = None):
     from config_reader import config #Импорт токеов и пр
     vk_session = vk_api.VkApi(token=config.VK_TOKEN.get_secret_value())
     GROUP_ID_MINUS= config.GROUP_ID_MINUS.get_secret_value() #Нужен ID группы именно с минусом
@@ -14,7 +23,10 @@ def VkPars():
     print('Смотрю на вашу стену.') #Оповещение пользователя
     Photo_Url_List = []
 
+    #logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
     try:
+        #logging.info(f"Memory Usage Before: {memory_usage():.2f} MB")
         for event in longpoll.listen():
             if event.type == VkBotEventType.WALL_POST_NEW:
 
@@ -40,10 +52,14 @@ def VkPars():
                         print(Post_Text)
             print ('Новый пост!')
             asyncio.run(Channelling(PHOTO_URLS = Photo_Url_List, caption = Post_Text))
+            #raise
 
-
+    except ConnectionAbortedError:
+        print('Произошла ошибка соединения.')
+        raise
     except Exception as e:
         print(f'Что-то пошло не так: {e}')
+        raise
     finally:
         print('Завершение работы...')
 
