@@ -1,0 +1,4 @@
+aiogram==3.27.0
+aiohttp==3.13.5
+pydantic-settings==2.14.0
+PyQt6==6.11.0
