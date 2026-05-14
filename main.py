@@ -29,5 +29,15 @@ def main() -> None:
     sys.exit(app.exec())
 
 
+def setup_windows_encoding():
+    """ Функция принудительной установки кодировки для windows """
+    if sys.platform == 'win32':
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        kernel32.SetConsoleCP(65001)
+        kernel32.SetConsoleOutputCP(65001)
+
+
 if __name__ == "__main__":
+    setup_windows_encoding()
     main()

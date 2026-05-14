@@ -4,7 +4,8 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class Updates:
     ts: str
-    updates: list[UpdateUnit]
+    updates: list[UpdateUnit] = None
+    failed: int = None
 
     @classmethod
     def from_raw_data(cls, data: dict) -> Updates:

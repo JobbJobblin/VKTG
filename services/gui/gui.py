@@ -105,6 +105,7 @@ class MainWindow(QMainWindow):
 
         # Сигналы producer
         self.producer_worker.inform.connect(self._log_message)
+        self.producer_worker.warning.connect(self._log_warn)
         self.producer_worker.error.connect(self._log_error)
         self.producer_worker.started.connect(self._on_producer_started)
         self.producer_worker.finished.connect(self._on_producer_finished)
@@ -112,6 +113,7 @@ class MainWindow(QMainWindow):
         # Сигналы consumer
         self.consumer_worker.inform.connect(self._log_message)
         self.consumer_worker.error.connect(self._log_error)
+        self.consumer_worker.warning.connect(self._log_warn)
         self.consumer_worker.started.connect(self._on_consumer_started)
         self.consumer_worker.finished.connect(self._on_consumer_finished)
 
@@ -168,6 +170,12 @@ class MainWindow(QMainWindow):
         """ Вывод ошибки в лог (красным) """
         self.log_widget.append(f'<span style="color: red;">[ERROR] {error}</span>')
         self.logger.error(error)
+
+    @pyqtSlot(str)
+    def _log_warn(self, warning: str) -> None:
+        """ Вывод ошибки в лог (красным) """
+        self.log_widget.append(f'<span style="color: yellow;">[WARN] {warning}</span>')
+        self.logger.warning(warning)
 
     @pyqtSlot()
     def _on_producer_started(self) -> None:

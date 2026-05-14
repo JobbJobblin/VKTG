@@ -22,6 +22,7 @@ class AsyncPyQtWorker(QObject, ABC, metaclass=QObjectABCMeta):
     # Список сигналов PyQt
     started: pyqtSignal = pyqtSignal()
     finished: pyqtSignal = pyqtSignal()
+    warning: pyqtSignal = pyqtSignal(str)
     error: pyqtSignal = pyqtSignal(str)
     inform: pyqtSignal = pyqtSignal(str)
 
@@ -33,8 +34,8 @@ class AsyncPyQtWorker(QObject, ABC, metaclass=QObjectABCMeta):
         self.name: str = name
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._tasks: List[asyncio.Future] = []
-        self._main_task: asyncio.Task = None
-        self._stop_event: asyncio.Event = asyncio.Event()
+        self._main_task: asyncio.Task | None = None
+        self._stop_event: asyncio.Event | None = None
         self._running: bool = False
 
     @abstractmethod
@@ -57,8 +58,6 @@ class AsyncPyQtWorker(QObject, ABC, metaclass=QObjectABCMeta):
         try:
             self._loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self._loop)
-
-            self._stop_event.clear()
 
             self.started.emit()
 
